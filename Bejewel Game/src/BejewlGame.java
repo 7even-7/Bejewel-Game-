@@ -29,7 +29,7 @@ public class BejewlGame extends JFrame implements GameEngine, ActionListener{
 		this.firstClickCol = -99;
 		this.secondClickdRow = -99;
 		this.secondClickCol = -99;
-		this.row = 8;
+		this.row = 9;
 		this.col = 8;
 		colors = new ArrayList<Color>();
 		colors.add(Color.MAGENTA);
@@ -65,28 +65,44 @@ public class BejewlGame extends JFrame implements GameEngine, ActionListener{
 		buttons = new JButton[this.row][this.col];
 	    for (int i = 0; i < row; i++) {
 	        for(int j = 0; j < col; j++) {
-	        
-	        	buttons[i][j] = new JButton();
-		  	    buttons[i][j].addActionListener(this);
-		  	    buttons[i][j].setFocusPainted(false);
-		  	    buttons[i][j].setBackground(this.colors.get((int)(Math.random() * 4)));
-		  	    gameBoard.add(buttons[i][j]);
+	        	if (i == 8) {
+	        		buttons[i][j] = new JButton("");
+	        		gameBoard.add(buttons[i][j]);
+	        	}
+//	        	else
+//	        	{
+//	        		buttons[i][j] = new JButton();
+//			  	    buttons[i][j].addActionListener(this);
+//			  	    buttons[i][j].setFocusPainted(false);
+//			  	    buttons[i][j].setBackground(this.colors.get((int)(Math.random() * 4)));
+//			  	    gameBoard.add(buttons[i][j]);
+//	        	}
+	        	else
+	        	{
+		        	buttons[i][j] = new JButton();
+			  	    buttons[i][j].addActionListener(this);
+			  	    buttons[i][j].setFocusPainted(false);
+			  	    buttons[i][j].setBackground(this.colors.get((int)(Math.random() * 4)));
+			  	    gameBoard.add(buttons[i][j]);
+	        	}
+
 	          
 	        }
 	      }
+	    
 	    //create the player field and score filed
-	    buttons[7][0] = new JButton("Player: " + this.userName);
-	    buttons[7][1] = new JButton("Score: " + this.score);
-	    buttons[7][2] = new JButton("Switch Player");
-	    buttons[7][3] = new JButton("Exit Game");
-	    //action listeners for switch player and exit game
+	    buttons[8][0].setText("Player: " + this.userName);
+	    buttons[8][1].setText("Score: " + this.score);
+	    buttons[8][2].setText("Switch Player");
+	    buttons[8][3].setText("Exit Game");
+//	    //action listeners for switch player and exit game
 	    this.SwitchGameActionListener();
 	    this.ExitActionListener();
-	    
-	    gameBoard.add(buttons[7][0]);
-	    gameBoard.add(buttons[7][1]);
-	    gameBoard.add(buttons[7][2]);
-	    gameBoard.add(buttons[7][3]);
+//	    
+//	    gameBoard.add(buttons[8][0]);
+//	    gameBoard.add(buttons[8][1]);
+//	    gameBoard.add(buttons[8][2]);
+//	    gameBoard.add(buttons[8][3]);
 	    
 	    this.getContentPane().add(gameBoard, "Center");
 	    
@@ -123,15 +139,18 @@ public class BejewlGame extends JFrame implements GameEngine, ActionListener{
 		this.secondClickdRow = r;
 		//System.out.println(this.firstClickRow + " " +  this.firstClickCol);
 		//System.out.println(this.secondClickdRow + " " +  this.secondClickCol);
+		//System.out.println(buttons[7][0].getBackground());
 		//System.out.println(firstClickCol == secondClickCol);
-		boolean res = this.isAdjacent(this.firstClickRow, this.firstClickCol, this.secondClickdRow, this.secondClickCol);
-		System.out.println(res);
+		//boolean res = this.isAdjacent(this.firstClickRow, this.firstClickCol, this.secondClickdRow, this.secondClickCol);
+		//System.out.println(res);
 		if(this.isAdjacent(this.firstClickRow, this.firstClickCol, this.secondClickdRow, this.secondClickCol))
 		{
 			this.updateBoard();
 		}
-
-		this.resetClickCursor();
+		else {
+			this.resetClickCursor();
+		}
+		
 		
 	}
 	//return num of matches up
@@ -263,7 +282,7 @@ public class BejewlGame extends JFrame implements GameEngine, ActionListener{
 		this.getHorizontalMatch(this.firstClickRow, this.firstClickCol);
 		this.getHorizontalMatch(this.secondClickdRow, this.secondClickCol);
 		//this.resetClickCursor();
-		buttons[7][1].setText("Score: " + Integer.toString(this.getScore()));
+		buttons[8][1].setText("Score: " + Integer.toString(this.getScore()));
 		this.resetClickCursor();
 	}
 	public void getVerticalMatch(int r, int c) {
@@ -278,7 +297,7 @@ public class BejewlGame extends JFrame implements GameEngine, ActionListener{
 			for(int i = startPoint; i <= r+down; i++) {
 				Random rand = new Random();
 				int random = rand.nextInt(6);
-				System.out.println(colors.get(random));
+				//System.out.println(colors.get(random));
 				buttons[i][c].setBackground(this.colors.get(random));
 			}
 			//updatescore
@@ -295,6 +314,7 @@ public class BejewlGame extends JFrame implements GameEngine, ActionListener{
 		int right = this.matchRight(r, c);
 		int startPoint = c - left;
 		int res = left + 1 + right;
+		System.out.println("start: " + startPoint + "res: " + res);
 		if (res >= 3) {
 			for(int i = startPoint; i <= c+right; i++) {
 				Random rand = new Random();
@@ -313,11 +333,20 @@ public class BejewlGame extends JFrame implements GameEngine, ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		JButton click = (JButton) e.getSource();
+		//System.out.println(click.getBackground());
+		//System.out.println(this.firstClickCol);
 		 for (int i = 0; i < this.row; i++) {
 		      for(int j = 0; j < this.col; j++) {
 		        if(click == buttons[i][j]) {
 		        //set first click location
-		          if (this.firstClickCol == -99) this.setFirstClick(i, j);
+		        System.out.println("row: " + i + " Col: " + j);
+		          if (this.firstClickCol == -99) 
+		          {
+		        	  this.setFirstClick(i, j);
+		        	  //System.out.println(this.firstClickRow + " , " + this.firstClickCol); 
+		        	  
+			          
+		          }
 		         //set second click location
 		          else this.setSecondClick(i, j);
 		        }
@@ -336,7 +365,7 @@ public class BejewlGame extends JFrame implements GameEngine, ActionListener{
 	
 	//change to a new player event listener
 	public void SwitchGameActionListener() {
-		buttons[7][2].addActionListener(new ActionListener() {
+		buttons[8][2].addActionListener(new ActionListener() {
 
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
@@ -351,7 +380,7 @@ public class BejewlGame extends JFrame implements GameEngine, ActionListener{
 
 	//exit game event listener
 	public void ExitActionListener() {
-		buttons[7][3].addActionListener(new ActionListener() {
+		buttons[8][3].addActionListener(new ActionListener() {
 
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
